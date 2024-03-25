@@ -5,7 +5,6 @@ import CloseButton from '../components/atoms/CloseButton';
 import Button from '../components/atoms/Button';
 import {useNavigation} from '@react-navigation/native';
 import {MainNavigatorNavigationProp} from '../navigation/MainNavigator.types';
-import axios from 'axios';
 import {addPhoto} from '../config/AxiosApi';
 
 const CameraScreen = () => {
