@@ -7,12 +7,14 @@ interface PhotoOptionsModalProps {
   visible: boolean;
   onClose: () => void;
   onTakePhoto: () => void;
+  onChooseFromLibrary: () => void;
 }
 
 const PhotoOptionsModal: React.FC<PhotoOptionsModalProps> = ({
   visible,
   onClose,
   onTakePhoto,
+  onChooseFromLibrary,
 }) => {
   return (
     <Modal
@@ -23,7 +25,7 @@ const PhotoOptionsModal: React.FC<PhotoOptionsModalProps> = ({
       <View style={styles.modalContainer}>
         <CloseButton onPress={onClose} />
         <Button title="Take Photo" onPress={onTakePhoto} />
-        <Button title="Choose from Library" onPress={onTakePhoto} />
+        <Button title="Choose from Library" onPress={onChooseFromLibrary} />
       </View>
     </Modal>
   );

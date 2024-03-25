@@ -1,40 +1,26 @@
 import React, {useState} from 'react';
-import {Alert, Linking, PermissionsAndroid} from 'react-native';
+import {Alert, Linking} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
-import {useCameraPermission} from 'react-native-vision-camera';
 import {MainNavigatorNavigationProp} from '../../navigation/MainNavigator.types';
 import Button from '../atoms/Button';
 import PhotoOptionsModal from '../../modals/PhotoOptionsModal';
+import {useCameraPermission} from 'react-native-vision-camera';
+import {requestLocationPermission} from '../../permissions/useLocationPermission';
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
+import PhotoSelectionModal from '../../modals/PhotoSelectionModal';
+import {addPhotoFromGallery} from '../../config/AxiosApi';
 
 const AddPhoto = () => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
+  const [showPhotoSelectionModal, setShowPhotoSelectionModal] = useState(false);
   const [locationPermission, setLocationPermission] = useState(false);
+  const [photos, setPhotos] = useState([]);
   const {requestPermission} = useCameraPermission();
   const navigation = useNavigation<MainNavigatorNavigationProp>();
 
   const openCamera = () => {
     setShowOptionsModal(false);
     navigation.navigate('CameraScreen');
-  };
-
-  const requestLocationPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-        {
-          title: 'Geolocation Permission',
-          message: 'Can we access your location?',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      console.log('granted', granted);
-      setLocationPermission(granted === PermissionsAndroid.RESULTS.GRANTED);
-    } catch (err) {
-      console.error('Failed to request location permission:', err);
-      setLocationPermission(false);
-    }
   };
 
   const handleCameraPermission = async () => {
@@ -59,10 +45,41 @@ const AddPhoto = () => {
     }
 
     if (!locationPermission) {
-      await requestLocationPermission();
+      const granted = await requestLocationPermission();
+      setLocationPermission(granted);
     }
 
     openCamera();
+  };
+
+  const handleLibraryPermission = async () => {
+    const params = {first: 20}; // Add your parameters here
+    try {
+      const result = await CameraRoll.getPhotos(params);
+
+      // Extract photos from result
+      const extractedPhotos = result.edges.map(edge => ({
+        uri: edge.node.image.uri,
+        location: edge.node.location?.heading,
+        latitude: edge.node.location?.latitude,
+        longitude: edge.node.location?.longitude,
+      }));
+
+      setPhotos(extractedPhotos);
+      setShowOptionsModal(false);
+      setShowPhotoSelectionModal(true);
+
+      // Add your logic to use the photos array
+    } catch (error) {
+      console.error('Failed to get photos from library:', error);
+    }
+  };
+
+  const handleSelectPhoto = (photo: any) => {
+    // Add logic to handle the selected photo
+    console.log('Selected photo:', photo);
+    addPhotoFromGallery(photo);
+    setShowPhotoSelectionModal(false);
   };
 
   return (
@@ -73,6 +90,14 @@ const AddPhoto = () => {
         visible={showOptionsModal}
         onClose={() => setShowOptionsModal(false)}
         onTakePhoto={handleCameraPermission}
+        onChooseFromLibrary={handleLibraryPermission}
+      />
+
+      <PhotoSelectionModal
+        visible={showPhotoSelectionModal}
+        photos={photos}
+        onSelectPhoto={handleSelectPhoto}
+        onClose={() => setShowPhotoSelectionModal(false)}
       />
     </>
   );

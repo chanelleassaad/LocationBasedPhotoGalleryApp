@@ -1,3 +1,4 @@
+import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
 
@@ -35,7 +36,7 @@ export const addPhoto = async (photoUri: string) => {
             console.log('Location name:', locationName);
 
             const photoData = {
-              uri: photoUri,
+              uri: 'file://' + photoUri,
               location: locationName,
               latitude: position.coords.latitude,
               longitude: position.coords.longitude,
@@ -47,7 +48,7 @@ export const addPhoto = async (photoUri: string) => {
             // Update the local state with the new photo
             const newPhoto: IPhoto = {
               id: dataResponse.data.id,
-              uri: photoUri,
+              uri: 'file://' + photoUri,
               location: locationName,
               latitude: latitude,
               longitude: longitude,
@@ -66,6 +67,23 @@ export const addPhoto = async (photoUri: string) => {
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
+    await CameraRoll.saveAsset(photoUri!, {type: 'photo'});
+  } catch (error) {
+    console.error('Failed to add photo:', error);
+  }
+};
+
+export const addPhotoFromGallery = async (photosData: any) => {
+  try {
+    const photoData = {
+      uri: photosData.uri ?? null,
+      location: photosData.locationName ?? null,
+      latitude: photosData.latitude ?? null,
+      longitude: photosData.longitude ?? null,
+    };
+
+    const dataResponse = await axios.post(baseURL, photoData);
+    console.log('Photo added:', dataResponse.data);
   } catch (error) {
     console.error('Failed to add photo:', error);
   }

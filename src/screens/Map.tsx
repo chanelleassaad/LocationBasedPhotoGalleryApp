@@ -25,20 +25,23 @@ const Map = () => {
           latitudeDelta: 0.015,
           longitudeDelta: 0.0121,
         }}>
-        {photos.map(photo => (
-          <Marker
-            key={photo.id}
-            coordinate={{
-              latitude: photo.latitude,
-              longitude: photo.longitude,
-            }}
-            description={'This is a marker in React Natve'}>
-            <Image
-              source={{uri: `file://${photo?.uri}`}}
-              style={styles.image}
-            />
-          </Marker>
-        ))}
+        {photos
+          .filter(photo => photo.latitude && photo.longitude) // Filter out photos without latitude or longitude
+          .map(photo => (
+            <Marker
+              key={photo.id}
+              title={photo.id}
+              coordinate={{
+                latitude: photo.latitude,
+                longitude: photo.longitude,
+              }}
+              description={'This is a marker in React Natve'}>
+              <Image
+                source={{uri: `file://${photo?.uri}`}}
+                style={styles.image}
+              />
+            </Marker>
+          ))}
       </MapView>
     </View>
   );

@@ -20,12 +20,13 @@ const PhotosList: React.FC = () => {
       const photosData = getPhotosData();
 
       // Organize photos by location
-      const locations: {[key: string]: IPhoto[]} = {};
+      const locations: {[key: string]: IPhoto[]} = {'No Location': []};
       photosData.forEach(photo => {
-        if (!locations[photo.location]) {
-          locations[photo.location] = [];
+        const location = photo.location || 'No Location';
+        if (!locations[location]) {
+          locations[location] = [];
         }
-        locations[photo.location].push(photo);
+        locations[location].push(photo);
       });
 
       // Convert locations object to an array of sections for SectionList
@@ -54,10 +55,7 @@ const PhotosList: React.FC = () => {
         renderItem={({item}) => (
           <View style={{padding: 10}}>
             <TouchableOpacity onLongPress={() => setSelectedPhoto(item)}>
-              <Image
-                source={{uri: `file://${item.uri}`}}
-                style={{width: 50, height: 70}}
-              />
+              <Image source={{uri: item.uri}} style={{width: 50, height: 70}} />
             </TouchableOpacity>
           </View>
         )}
