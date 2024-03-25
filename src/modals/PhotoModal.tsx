@@ -21,9 +21,9 @@ const PhotoModal: React.FC<PhotoModalProps> = ({photo, onClose, onDelete}) => {
           />
         </View>
 
-        <DetailsText title="id" text={photo?.id} />
-        <DetailsText title="id" text={photo?.location} />
-        <DetailsText title="id" text={photo?.uri} />
+        <DetailsText title="Id" text={photo?.id} />
+        <DetailsText title="Location" text={photo?.location} />
+        <DetailsText title="URI" text={photo?.uri} />
         <CloseButton onPress={onClose} />
       </View>
     </Modal>

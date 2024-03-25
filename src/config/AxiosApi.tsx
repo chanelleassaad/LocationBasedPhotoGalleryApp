@@ -8,6 +8,8 @@ export interface IPhoto {
   id: string;
   uri: string;
   location: string;
+  latitude: number;
+  longitude: number;
 }
 
 let photosData: IPhoto[] = [];
@@ -27,11 +29,16 @@ export const addPhoto = async (photoUri: string) => {
             response.data.results.length > 0
           ) {
             const locationName = response.data.results[0].formatted_address;
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
             console.log('Location name:', locationName);
 
             const photoData = {
               uri: photoUri,
               location: locationName,
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
             };
 
             const dataResponse = await axios.post(baseURL, photoData);
@@ -42,6 +49,8 @@ export const addPhoto = async (photoUri: string) => {
               id: dataResponse.data.id,
               uri: photoUri,
               location: locationName,
+              latitude: latitude,
+              longitude: longitude,
             };
             photosData = [...photosData, newPhoto];
             console.log('Photos updated:', photosData);
