@@ -1,7 +1,7 @@
 import React from 'react';
 import {Modal, View, StyleSheet} from 'react-native';
-import Button from '../atoms/Button';
-import CloseButton from '../atoms/CloseButton';
+import Button from '../components/atoms/Button';
+import CloseButton from '../components/atoms/CloseButton';
 
 interface PhotoOptionsModalProps {
   visible: boolean;

@@ -1,11 +1,18 @@
 import React, {useEffect, useState} from 'react';
-import {Image, SectionList, Text, View} from 'react-native';
-import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
+import {Image, SectionList, Text, TouchableOpacity, View} from 'react-native';
+import {
+  IPhoto,
+  deletePhoto,
+  getAllPhotos,
+  getPhotosData,
+} from '../../config/AxiosApi';
+import PhotoModal from '../../modals/PhotoModal';
 
 const PhotosList: React.FC = () => {
   const [photosByLocation, setPhotosByLocation] = useState<
     {title: string; data: IPhoto[]}[]
   >([]);
+  const [selectedPhoto, setSelectedPhoto] = useState<IPhoto | null>(null);
 
   useEffect(() => {
     // Load all photos data
@@ -31,29 +38,41 @@ const PhotosList: React.FC = () => {
     });
   }, []);
 
-  const renderPhoto = ({item}: {item: IPhoto}) => (
-    <View style={{padding: 10}}>
-      <Image source={{uri: `file://${item.uri}`}} width={50} height={70} />
-    </View>
-  );
-
-  const renderSectionHeader = ({
-    section: {title},
-  }: {
-    section: {title: string};
-  }) => (
-    <View style={{backgroundColor: 'lightgray', padding: 10}}>
-      <Text style={{fontWeight: 'bold'}}>{title}</Text>
-    </View>
-  );
+  const closeModal = () => {
+    setSelectedPhoto(null);
+  };
+  const deleteSelectedPhoto = (photo: IPhoto) => {
+    deletePhoto(photo.id);
+    setSelectedPhoto(null);
+  };
 
   return (
-    <SectionList
-      sections={photosByLocation}
-      keyExtractor={item => item.id}
-      renderItem={renderPhoto}
-      renderSectionHeader={renderSectionHeader}
-    />
+    <View>
+      <SectionList
+        sections={photosByLocation}
+        keyExtractor={item => item.id}
+        renderItem={({item}) => (
+          <View style={{padding: 10}}>
+            <TouchableOpacity onLongPress={() => setSelectedPhoto(item)}>
+              <Image
+                source={{uri: `file://${item.uri}`}}
+                style={{width: 50, height: 70}}
+              />
+            </TouchableOpacity>
+          </View>
+        )}
+        renderSectionHeader={({section: {title}}) => (
+          <View style={{backgroundColor: 'lightgray', padding: 10}}>
+            <Text style={{fontWeight: 'bold'}}>{title}</Text>
+          </View>
+        )}
+      />
+      <PhotoModal
+        photo={selectedPhoto}
+        onClose={closeModal}
+        onDelete={() => selectedPhoto && deleteSelectedPhoto(selectedPhoto)}
+      />
+    </View>
   );
 };
 

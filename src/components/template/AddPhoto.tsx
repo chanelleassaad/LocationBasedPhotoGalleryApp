@@ -4,7 +4,7 @@ import {useNavigation} from '@react-navigation/native';
 import {useCameraPermission} from 'react-native-vision-camera';
 import {MainNavigatorNavigationProp} from '../../navigation/MainNavigator.types';
 import Button from '../atoms/Button';
-import PhotoOptionsModal from '../organisms/PhotoOptionsModal';
+import PhotoOptionsModal from '../../modals/PhotoOptionsModal';
 
 const AddPhoto = () => {
   const [showOptionsModal, setShowOptionsModal] = useState(false);
