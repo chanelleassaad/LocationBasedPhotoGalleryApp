@@ -1,10 +1,11 @@
-import {View, Text} from 'react-native';
+import {View} from 'react-native';
 import React from 'react';
+import AddPhoto from '../components/template/AddPhoto';
 
 const Library = () => {
   return (
     <View>
-      <Text>Library</Text>
+      <AddPhoto />
     </View>
   );
 };

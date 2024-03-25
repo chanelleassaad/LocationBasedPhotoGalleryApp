@@ -4,6 +4,7 @@ import Map from '../screens/Map';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Library from '../screens/Library';
 import {MainNavigatorStackParamList} from './MainNavigator.types';
+import CameraScreen from '../screens/CameraScreen';
 
 const MainStackNavigator = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator<MainNavigatorStackParamList>();
@@ -23,6 +24,11 @@ const MainNavigator = () => {
       <MainStackNavigator.Screen
         name="PhotoGallery"
         component={PhotoGallery}
+        options={{headerShown: false}}
+      />
+      <MainStackNavigator.Screen
+        name="CameraScreen"
+        component={CameraScreen}
         options={{headerShown: false}}
       />
     </MainStackNavigator.Navigator>
