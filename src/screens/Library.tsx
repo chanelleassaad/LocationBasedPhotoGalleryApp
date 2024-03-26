@@ -5,7 +5,7 @@ import PhotosList from '../components/organisms/PhotosList';
 
 const Library = () => {
   return (
-    <View>
+    <View style={{marginHorizontal: 10}}>
       <AddPhoto />
       <PhotosList />
     </View>

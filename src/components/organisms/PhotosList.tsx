@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {Image, SectionList, Text, TouchableOpacity, View} from 'react-native';
+import {Image, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import {
   IPhoto,
   deletePhoto,
@@ -42,6 +42,7 @@ const PhotosList: React.FC = () => {
   const closeModal = () => {
     setSelectedPhoto(null);
   };
+
   const deleteSelectedPhoto = (photo: IPhoto) => {
     deletePhoto(photo.id);
     setSelectedPhoto(null);
@@ -49,22 +50,35 @@ const PhotosList: React.FC = () => {
 
   return (
     <View>
-      <SectionList
-        sections={photosByLocation}
-        keyExtractor={item => item.id}
-        renderItem={({item}) => (
-          <View style={{padding: 10}}>
-            <TouchableOpacity onLongPress={() => setSelectedPhoto(item)}>
-              <Image source={{uri: item.uri}} style={{width: 50, height: 70}} />
-            </TouchableOpacity>
-          </View>
-        )}
-        renderSectionHeader={({section: {title}}) => (
-          <View style={{backgroundColor: 'lightgray', padding: 10}}>
-            <Text style={{fontWeight: 'bold'}}>{title}</Text>
-          </View>
-        )}
-      />
+      {photosByLocation.map(({title, data}) => (
+        <View key={title}>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              marginVertical: 10,
+              padding: 5,
+              backgroundColor: 'grey',
+              color: 'white',
+            }}>
+            {title}
+          </Text>
+          <FlatList
+            horizontal
+            data={data}
+            keyExtractor={item => item.id}
+            renderItem={({item}) => (
+              <TouchableOpacity
+                style={{marginHorizontal: 5}}
+                onPress={() => setSelectedPhoto(item)}>
+                <Image
+                  source={{uri: item.uri}}
+                  style={{width: 50, height: 70, borderRadius: 5}}
+                />
+              </TouchableOpacity>
+            )}
+          />
+        </View>
+      ))}
       <PhotoModal
         photo={selectedPhoto}
         onClose={closeModal}

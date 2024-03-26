@@ -15,10 +15,7 @@ const PhotoModal: React.FC<PhotoModalProps> = ({photo, onClose, onDelete}) => {
     <Modal visible={photo !== null} animationType="slide">
       <View style={styles.modalContent}>
         <View style={styles.imageContainer}>
-          <Image
-            source={{uri: `file://${photo?.uri}`}}
-            style={styles.modalImage}
-          />
+          <Image source={{uri: photo?.uri}} style={styles.modalImage} />
         </View>
 
         <DetailsText title="Id" text={photo?.id} />

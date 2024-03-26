@@ -5,13 +5,26 @@ import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Library from '../screens/Library';
 import {MainNavigatorStackParamList} from './MainNavigator.types';
 import CameraScreen from '../screens/CameraScreen';
+import FooterIcons from '../components/atoms/FooterIcons';
 
 const MainStackNavigator = createNativeStackNavigator();
 const BottomTabs = createBottomTabNavigator<MainNavigatorStackParamList>();
 
+const Icons = ({route}) => {
+  if (route.name === 'Library') {
+    return () => <FooterIcons url={require('../assets/images/library.png')} />;
+  } else if (route.name === 'Map') {
+    return () => <FooterIcons url={require('../assets/images/map.png')} />;
+  }
+  return null;
+};
+
 const PhotoGallery = () => {
   return (
-    <BottomTabs.Navigator>
+    <BottomTabs.Navigator
+      screenOptions={({route}) => ({
+        tabBarIcon: Icons({route}),
+      })}>
       <BottomTabs.Screen name="Library" component={Library} />
       <BottomTabs.Screen name="Map" component={Map} />
     </BottomTabs.Navigator>
