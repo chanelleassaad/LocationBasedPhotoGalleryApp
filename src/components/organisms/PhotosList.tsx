@@ -1,11 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {Image, Text, TouchableOpacity, View, FlatList} from 'react-native';
 import {
-  IPhoto,
-  deletePhoto,
-  getAllPhotos,
-  getPhotosData,
-} from '../../config/AxiosApi';
+  Image,
+  Text,
+  TouchableOpacity,
+  View,
+  FlatList,
+  StyleSheet,
+} from 'react-native';
+import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
 import PhotoModal from '../../modals/PhotoModal';
 
 const PhotosList: React.FC = () => {
@@ -43,49 +45,42 @@ const PhotosList: React.FC = () => {
     setSelectedPhoto(null);
   };
 
-  const deleteSelectedPhoto = (photo: IPhoto) => {
-    deletePhoto(photo.id);
-    setSelectedPhoto(null);
-  };
-
   return (
     <View>
       {photosByLocation.map(({title, data}) => (
         <View key={title}>
-          <Text
-            style={{
-              fontWeight: 'bold',
-              marginVertical: 10,
-              padding: 5,
-              backgroundColor: 'grey',
-              color: 'white',
-            }}>
-            {title}
-          </Text>
+          <Text style={styles.text}>{title}</Text>
           <FlatList
             horizontal
             data={data}
             keyExtractor={item => item.id}
             renderItem={({item}) => (
               <TouchableOpacity
-                style={{marginHorizontal: 5}}
+                style={styles.imageTouch}
                 onPress={() => setSelectedPhoto(item)}>
-                <Image
-                  source={{uri: item.uri}}
-                  style={{width: 50, height: 70, borderRadius: 5}}
-                />
+                <Image source={{uri: item.uri}} style={styles.image} />
               </TouchableOpacity>
             )}
           />
         </View>
       ))}
-      <PhotoModal
-        photo={selectedPhoto}
-        onClose={closeModal}
-        onDelete={() => selectedPhoto && deleteSelectedPhoto(selectedPhoto)}
-      />
+      <PhotoModal photo={selectedPhoto} onClose={closeModal} />
     </View>
   );
 };
 
 export default PhotosList;
+
+const styles = StyleSheet.create({
+  text: {
+    fontWeight: 'bold',
+    marginVertical: 10,
+    padding: 5,
+    backgroundColor: 'grey',
+    color: 'white',
+  },
+  imageTouch: {
+    marginHorizontal: 5,
+  },
+  image: {width: 50, height: 70, borderRadius: 5},
+});
