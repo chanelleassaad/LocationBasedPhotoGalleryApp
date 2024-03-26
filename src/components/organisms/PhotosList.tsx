@@ -15,31 +15,34 @@ const PhotosList: React.FC = () => {
     {title: string; data: IPhoto[]}[]
   >([]);
   const [selectedPhoto, setSelectedPhoto] = useState<IPhoto | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
-    // Load all photos data
-    getAllPhotos().then(() => {
-      const photosData = getPhotosData();
-
-      // Organize photos by location
-      const locations: {[key: string]: IPhoto[]} = {'No Location': []};
-      photosData.forEach(photo => {
-        const location = photo.location || 'No Location';
-        if (!locations[location]) {
-          locations[location] = [];
-        }
-        locations[location].push(photo);
-      });
-
-      // Convert locations object to an array of sections for SectionList
-      const sections = Object.keys(locations).map(location => ({
-        title: location,
-        data: locations[location],
-      }));
-
-      setPhotosByLocation(sections);
-    });
+    loadPhotos();
   }, []);
+
+  const loadPhotos = async () => {
+    setRefreshing(true);
+    await getAllPhotos();
+    const photosData = getPhotosData();
+
+    const locations: {[key: string]: IPhoto[]} = {'No Location': []};
+    photosData.forEach(photo => {
+      const location = photo.location || 'No Location';
+      if (!locations[location]) {
+        locations[location] = [];
+      }
+      locations[location].push(photo);
+    });
+
+    const sections = Object.keys(locations).map(location => ({
+      title: location,
+      data: locations[location],
+    }));
+
+    setPhotosByLocation(sections);
+    setRefreshing(false);
+  };
 
   const closeModal = () => {
     setSelectedPhoto(null);
@@ -47,23 +50,29 @@ const PhotosList: React.FC = () => {
 
   return (
     <View>
-      {photosByLocation.map(({title, data}) => (
-        <View key={title}>
-          <Text style={styles.text}>{title}</Text>
-          <FlatList
-            horizontal
-            data={data}
-            keyExtractor={item => item.id}
-            renderItem={({item}) => (
-              <TouchableOpacity
-                style={styles.imageTouch}
-                onPress={() => setSelectedPhoto(item)}>
-                <Image source={{uri: item.uri}} style={styles.image} />
-              </TouchableOpacity>
-            )}
-          />
-        </View>
-      ))}
+      <FlatList
+        data={photosByLocation}
+        keyExtractor={(item, index) => index.toString()}
+        renderItem={({item}) => (
+          <View key={item.title}>
+            <Text style={styles.text}>{item.title}</Text>
+            <FlatList
+              horizontal
+              data={item.data}
+              keyExtractor={item => item.id.toString()}
+              renderItem={({item}) => (
+                <TouchableOpacity
+                  style={styles.imageTouch}
+                  onPress={() => setSelectedPhoto(item)}>
+                  <Image source={{uri: item.uri}} style={styles.image} />
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
+        onRefresh={loadPhotos}
+        refreshing={refreshing}
+      />
       <PhotoModal photo={selectedPhoto} onClose={closeModal} />
     </View>
   );
@@ -83,4 +92,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
   },
   image: {width: 50, height: 70, borderRadius: 5},
+  loadingMore: {
+    marginVertical: 10,
+  },
 });
