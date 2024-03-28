@@ -1,14 +1,8 @@
 import React, {useEffect, useState} from 'react';
-import {
-  Image,
-  Text,
-  TouchableOpacity,
-  View,
-  FlatList,
-  StyleSheet,
-} from 'react-native';
+import {Text, View, FlatList, StyleSheet, Animated} from 'react-native';
 import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
 import PhotoModal from '../../modals/PhotoModal';
+import PhotoItem from '../organisms/PhotoItem';
 
 const PhotosList: React.FC = () => {
   const [photosByLocation, setPhotosByLocation] = useState<
@@ -22,12 +16,19 @@ const PhotosList: React.FC = () => {
   }, []);
 
   const loadPhotos = async () => {
-    setRefreshing(true);
+    let photosData = [];
+    // const photoStorage = await getPhotoStorage();
+    // if (photoStorage) {
+    //   photosData = photoStorage;
+    // } else {
+    //   await getAllPhotos();
+    //   photosData = getPhotosData();
+    // }
     await getAllPhotos();
-    const photosData = getPhotosData();
+    photosData = getPhotosData();
 
     const locations: {[key: string]: IPhoto[]} = {'No Location': []};
-    photosData.forEach(photo => {
+    photosData.forEach((photo: IPhoto) => {
       const location = photo.location || 'No Location';
       if (!locations[location]) {
         locations[location] = [];
@@ -40,7 +41,7 @@ const PhotosList: React.FC = () => {
       data: locations[location],
     }));
 
-    setPhotosByLocation(sections);
+    setPhotosByLocation([...sections]);
     setRefreshing(false);
   };
 
@@ -60,13 +61,16 @@ const PhotosList: React.FC = () => {
               horizontal
               data={item.data}
               keyExtractor={item => item.id.toString()}
-              renderItem={({item}) => (
-                <TouchableOpacity
-                  style={styles.imageTouch}
-                  onPress={() => setSelectedPhoto(item)}>
-                  <Image source={{uri: item.uri}} style={styles.image} />
-                </TouchableOpacity>
-              )}
+              renderItem={({item}) => {
+                const animation = new Animated.Value(1);
+                return (
+                  <PhotoItem
+                    item={item}
+                    onPress={() => setSelectedPhoto(item)}
+                    animation={animation}
+                  />
+                );
+              }}
             />
           </View>
         )}
@@ -88,10 +92,6 @@ const styles = StyleSheet.create({
     backgroundColor: 'grey',
     color: 'white',
   },
-  imageTouch: {
-    marginHorizontal: 5,
-  },
-  image: {width: 50, height: 70, borderRadius: 5},
   loadingMore: {
     marginVertical: 10,
   },

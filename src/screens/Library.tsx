@@ -1,7 +1,7 @@
 import {View} from 'react-native';
 import React from 'react';
 import AddPhoto from '../components/template/AddPhoto';
-import PhotosList from '../components/organisms/PhotosList';
+import PhotosList from '../components/template/PhotosList';
 
 const Library = () => {
   return (

@@ -35,9 +35,10 @@ const ImageWithHOC = gestureHandlerRootHOC(
             runOnJS(deletePhoto)(deletePhotoId);
           }
           runOnJS(onClose)();
+        } else {
+          start.value = {x: 0, y: 0};
+          offset.value = {x: 0, y: 0};
         }
-        start.value = {x: 0, y: 0};
-        offset.value = {x: 0, y: 0};
       });
 
     const animatedStyles = useAnimatedStyle(() => {
