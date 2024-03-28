@@ -4,7 +4,7 @@ import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
 import PhotoModal from '../../modals/PhotoModal';
 import PhotoItem from '../organisms/PhotoItem';
 
-const PhotosList: React.FC = () => {
+const PhotosList = () => {
   const [photosByLocation, setPhotosByLocation] = useState<
     {title: string; data: IPhoto[]}[]
   >([]);
@@ -66,7 +66,7 @@ const PhotosList: React.FC = () => {
                 return (
                   <PhotoItem
                     item={item}
-                    onPress={() => setSelectedPhoto(item)}
+                    onLongPress={() => setSelectedPhoto(item)}
                     animation={animation}
                   />
                 );

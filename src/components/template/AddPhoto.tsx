@@ -53,11 +53,10 @@ const AddPhoto = () => {
   };
 
   const handleLibraryPermission = async () => {
-    const params = {first: 20}; // Add your parameters here
+    const params = {first: 20};
     try {
       const result = await CameraRoll.getPhotos(params);
 
-      // Extract photos from result
       const extractedPhotos = result.edges.map(edge => ({
         uri: edge.node.image.uri,
         location: edge.node.location?.heading,
@@ -68,16 +67,12 @@ const AddPhoto = () => {
       setPhotos(extractedPhotos);
       setShowOptionsModal(false);
       setShowPhotoSelectionModal(true);
-
-      // Add your logic to use the photos array
     } catch (error) {
       console.error('Failed to get photos from library:', error);
     }
   };
 
   const handleSelectPhoto = (photo: any) => {
-    // Add logic to handle the selected photo
-    console.log('Selected photo:', photo);
     addPhotoFromGallery(photo);
     setShowPhotoSelectionModal(false);
   };

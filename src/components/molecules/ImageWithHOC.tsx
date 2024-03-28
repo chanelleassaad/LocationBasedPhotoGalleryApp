@@ -48,7 +48,7 @@ const ImageWithHOC = gestureHandlerRootHOC(
     });
 
     return (
-      <Animated.View style={[animatedStyles]}>
+      <Animated.View style={[animatedStyles]} testID="image">
         <GestureDetector gesture={gesture}>
           <Image source={{uri: photo?.uri}} style={[styles.modalImage]} />
         </GestureDetector>

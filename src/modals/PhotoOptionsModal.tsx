@@ -10,12 +10,12 @@ interface PhotoOptionsModalProps {
   onChooseFromLibrary: () => void;
 }
 
-const PhotoOptionsModal: React.FC<PhotoOptionsModalProps> = ({
+const PhotoOptionsModal = ({
   visible,
   onClose,
   onTakePhoto,
   onChooseFromLibrary,
-}) => {
+}: PhotoOptionsModalProps) => {
   return (
     <Modal
       visible={visible}

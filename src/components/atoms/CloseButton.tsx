@@ -5,7 +5,7 @@ type ButtonProps = {
   onPress: () => void;
 };
 
-const CloseButton: React.FC<ButtonProps> = ({onPress}) => {
+const CloseButton = ({onPress}: ButtonProps) => {
   return (
     <Pressable onPress={onPress} style={styles.button}>
       <Text style={styles.title}>X</Text>

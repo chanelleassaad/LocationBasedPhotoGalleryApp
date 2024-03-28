@@ -10,7 +10,7 @@ interface PhotoModalProps {
   onClose: () => void;
 }
 
-const PhotoModal: React.FC<PhotoModalProps> = ({photo, onClose}) => {
+const PhotoModal = ({photo, onClose}: PhotoModalProps) => {
   return (
     <Modal visible={photo !== null} animationType="slide">
       <View style={styles.modalContent}>

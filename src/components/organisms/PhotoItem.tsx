@@ -5,10 +5,10 @@ import {IPhoto} from '../../config/AxiosApi';
 interface PhotoItemProps {
   item: IPhoto;
   animation: Animated.Value;
-  onPress: () => void;
+  onLongPress: () => void;
 }
 
-const PhotoItem: React.FC<PhotoItemProps> = ({item, animation, onPress}) => {
+const PhotoItem = ({item, animation, onLongPress}: PhotoItemProps) => {
   const handlePressIn = () => {
     Animated.spring(animation, {
       toValue: 0.8,
@@ -25,8 +25,9 @@ const PhotoItem: React.FC<PhotoItemProps> = ({item, animation, onPress}) => {
 
   return (
     <TouchableOpacity
+      testID="photo-test"
       style={styles.imageTouch}
-      onLongPress={onPress}
+      onLongPress={onLongPress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       activeOpacity={1}>

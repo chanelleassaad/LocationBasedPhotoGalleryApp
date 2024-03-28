@@ -7,7 +7,7 @@ type ButtonProps = {
   disabled?: boolean;
 };
 
-const Button: React.FC<ButtonProps> = ({onPress, title, disabled = false}) => {
+const Button = ({onPress, title, disabled = false}: ButtonProps) => {
   return (
     <Pressable onPress={onPress} disabled={disabled} style={styles.button}>
       <Text style={styles.title}>{title}</Text>

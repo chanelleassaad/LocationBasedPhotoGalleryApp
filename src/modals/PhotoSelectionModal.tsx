@@ -8,8 +8,21 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native';
+import {IPhoto} from '../config/AxiosApi';
 
-const PhotoSelectionModal = ({visible, photos, onSelectPhoto, onClose}) => {
+interface PhotoSelectionModalProps {
+  visible: boolean;
+  photos: IPhoto[];
+  onSelectPhoto: (photo: IPhoto) => void;
+  onClose: () => void;
+}
+
+const PhotoSelectionModal = ({
+  visible,
+  photos,
+  onSelectPhoto,
+  onClose,
+}: PhotoSelectionModalProps) => {
   return (
     <Modal
       visible={visible}

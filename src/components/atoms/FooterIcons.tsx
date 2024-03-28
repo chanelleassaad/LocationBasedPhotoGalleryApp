@@ -2,7 +2,7 @@ import React from 'react';
 import {Image, StyleSheet} from 'react-native';
 
 interface FooterIconsProps {
-  url: any; // Change the type to any for now, as require expects a static string
+  url: any;
 }
 
 const FooterIcons = ({url}: FooterIconsProps) => {
