@@ -46,6 +46,7 @@ export default PhotoItem;
 const styles = StyleSheet.create({
   imageTouch: {
     marginHorizontal: 5,
+    padding: 4,
   },
-  image: {width: 50, height: 70, borderRadius: 5},
+  image: {width: 66, height: 90, borderRadius: 5},
 });

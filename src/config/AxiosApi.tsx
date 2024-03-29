@@ -1,9 +1,12 @@
 import {CameraRoll} from '@react-native-camera-roll/camera-roll';
 import axios from 'axios';
 import Geolocation from 'react-native-geolocation-service';
+import {addPhotoStorage, deleteFromPhotoStorage} from '../store/PhotoStorage';
 
 export const baseURL =
   'https://6601591187c91a11641aa7a0.mockapi.io/myapp/photos';
+
+export const LIMIT = 16;
 
 export interface IPhoto {
   id: string;
@@ -54,7 +57,7 @@ export const addPhoto = async (photoUri: string) => {
               longitude: longitude,
             };
             photosData = [...photosData, newPhoto];
-            console.log('Photos updated:', photosData);
+            await addPhotoStorage(dataResponse.data);
           } else {
             console.error('No results found in the Google Maps API response');
           }
@@ -81,9 +84,8 @@ export const addPhotoFromGallery = async (photosData: any) => {
       latitude: photosData.latitude ?? null,
       longitude: photosData.longitude ?? null,
     };
-
     const dataResponse = await axios.post(baseURL, photoData);
-    console.log('Photo added:', dataResponse.data);
+    await addPhotoStorage(dataResponse.data);
   } catch (error) {
     console.error('Failed to add photo:', error);
   }
@@ -94,19 +96,27 @@ export const deletePhoto = async (id: string) => {
     const response = await axios.delete(`${baseURL}/${id}`);
     photosData = photosData.filter(photo => photo.id !== id);
     console.log('Photo deleted:', response.data);
+    await deleteFromPhotoStorage(id);
   } catch (error) {
     console.error('Failed to delete photo:', error);
   }
 };
 
-export const getAllPhotos = async () => {
+export const getAllPhotos = async (page: number) => {
   try {
-    const response = await axios.get(baseURL);
-    photosData = response.data;
-    console.log('All photos:', photosData);
-    return photosData;
+    const url = new URL(baseURL);
+    url.searchParams.append('page', JSON.stringify(page));
+    url.searchParams.append('limit', JSON.stringify(LIMIT));
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {'content-type': 'application/json'},
+    });
+    if (res.ok) {
+      photosData = await res.json();
+      return photosData;
+    }
   } catch (error) {
-    console.error('Failed to get photos:', error);
+    console.error('Failed to fetch photos:', error);
     throw error;
   }
 };

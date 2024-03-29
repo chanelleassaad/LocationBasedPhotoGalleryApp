@@ -5,7 +5,7 @@ import PhotosList from '../components/template/PhotosList';
 
 const Library = () => {
   return (
-    <View style={{marginHorizontal: 10}}>
+    <View style={{marginHorizontal: 10, marginBottom: 120}}>
       <AddPhoto />
       <PhotosList />
     </View>

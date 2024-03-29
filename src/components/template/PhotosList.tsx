@@ -1,5 +1,12 @@
 import React, {useEffect, useState} from 'react';
-import {Text, View, FlatList, StyleSheet, Animated} from 'react-native';
+import {
+  Text,
+  View,
+  FlatList,
+  StyleSheet,
+  Animated,
+  ActivityIndicator,
+} from 'react-native';
 import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
 import PhotoModal from '../../modals/PhotoModal';
 import PhotoItem from '../organisms/PhotoItem';
@@ -10,25 +17,24 @@ const PhotosList = () => {
   >([]);
   const [selectedPhoto, setSelectedPhoto] = useState<IPhoto | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [page, setPage] = useState(1);
+  const [photos, setPhotos] = useState<IPhoto[]>([]);
 
   useEffect(() => {
     loadPhotos();
   }, []);
 
   const loadPhotos = async () => {
-    let photosData = [];
-    // const photoStorage = await getPhotoStorage();
-    // if (photoStorage) {
-    //   photosData = photoStorage;
-    // } else {
-    //   await getAllPhotos();
-    //   photosData = getPhotosData();
-    // }
-    await getAllPhotos();
-    photosData = getPhotosData();
+    setLoadingMore(true);
 
-    const locations: {[key: string]: IPhoto[]} = {'No Location': []};
-    photosData.forEach((photo: IPhoto) => {
+    await getAllPhotos(page);
+    const photosData = getPhotosData();
+    setPhotos(prev => [...prev, ...photosData]);
+
+    const locations: {[key: string]: IPhoto[]} = {};
+
+    photos.forEach((photo: IPhoto) => {
       const location = photo.location || 'No Location';
       if (!locations[location]) {
         locations[location] = [];
@@ -43,6 +49,8 @@ const PhotosList = () => {
 
     setPhotosByLocation([...sections]);
     setRefreshing(false);
+    setLoadingMore(false);
+    setPage(prev => prev + 1);
   };
 
   const closeModal = () => {
@@ -58,9 +66,9 @@ const PhotosList = () => {
           <View key={item.title}>
             <Text style={styles.text}>{item.title}</Text>
             <FlatList
-              horizontal
               data={item.data}
               keyExtractor={item => item.id.toString()}
+              numColumns={4}
               renderItem={({item}) => {
                 const animation = new Animated.Value(1);
                 return (
@@ -76,6 +84,11 @@ const PhotosList = () => {
         )}
         onRefresh={loadPhotos}
         refreshing={refreshing}
+        onEndReached={loadPhotos}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={
+          loadingMore && <ActivityIndicator style={styles.loadingMore} />
+        }
       />
       <PhotoModal photo={selectedPhoto} onClose={closeModal} />
     </View>
