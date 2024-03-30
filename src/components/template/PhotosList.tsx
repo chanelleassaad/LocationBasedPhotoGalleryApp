@@ -58,14 +58,14 @@ const PhotosList = () => {
     setPhotosByLocation(sections);
     setRefreshing(false);
     setLoadingMore(false);
-  }, []);
+  }, [page]);
 
   const closeModal = () => {
     setSelectedPhoto(null);
   };
 
   const onEndReached = () => {
-    if (!loadingMore) {
+    if (!loadingMore && photos.length % LIMIT === 0) {
       setLoadingMore(true);
       const pageToFetch = Math.ceil(photos.length / LIMIT) + 1;
       setPage(pageToFetch);
