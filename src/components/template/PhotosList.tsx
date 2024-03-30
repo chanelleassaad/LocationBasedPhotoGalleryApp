@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -7,7 +7,12 @@ import {
   Animated,
   ActivityIndicator,
 } from 'react-native';
-import {IPhoto, getAllPhotos, getPhotosData} from '../../config/AxiosApi';
+import {
+  IPhoto,
+  LIMIT,
+  getAllPhotos,
+  getPhotosData,
+} from '../../config/AxiosApi';
 import PhotoModal from '../../modals/PhotoModal';
 import PhotoItem from '../organisms/PhotoItem';
 
@@ -23,18 +28,21 @@ const PhotosList = () => {
 
   useEffect(() => {
     loadPhotos();
-  }, []);
+  }, [page]);
 
-  const loadPhotos = async () => {
-    setLoadingMore(true);
+  const loadPhotos = useCallback(async () => {
+    const newPhotos = await getAllPhotos(page);
+    if (newPhotos?.length === 0) {
+      setRefreshing(false);
+      setLoadingMore(false);
+      return;
+    }
 
-    await getAllPhotos(page);
-    const photosData = getPhotosData();
-    setPhotos(prev => [...prev, ...photosData]);
+    const updatedPhotos = [...photos, ...newPhotos];
+    setPhotos(updatedPhotos);
 
     const locations: {[key: string]: IPhoto[]} = {};
-
-    photos.forEach((photo: IPhoto) => {
+    updatedPhotos.forEach((photo: IPhoto) => {
       const location = photo.location || 'No Location';
       if (!locations[location]) {
         locations[location] = [];
@@ -47,14 +55,21 @@ const PhotosList = () => {
       data: locations[location],
     }));
 
-    setPhotosByLocation([...sections]);
+    setPhotosByLocation(sections);
     setRefreshing(false);
     setLoadingMore(false);
-    setPage(prev => prev + 1);
-  };
+  }, []);
 
   const closeModal = () => {
     setSelectedPhoto(null);
+  };
+
+  const onEndReached = () => {
+    if (!loadingMore) {
+      setLoadingMore(true);
+      const pageToFetch = Math.ceil(photos.length / LIMIT) + 1;
+      setPage(pageToFetch);
+    }
   };
 
   return (
@@ -67,8 +82,8 @@ const PhotosList = () => {
             <Text style={styles.text}>{item.title}</Text>
             <FlatList
               data={item.data}
-              keyExtractor={item => item.id.toString()}
               numColumns={4}
+              keyExtractor={item => item.id.toString()}
               renderItem={({item}) => {
                 const animation = new Animated.Value(1);
                 return (
@@ -84,7 +99,7 @@ const PhotosList = () => {
         )}
         onRefresh={loadPhotos}
         refreshing={refreshing}
-        onEndReached={loadPhotos}
+        onEndReached={onEndReached}
         onEndReachedThreshold={0.1}
         ListFooterComponent={
           loadingMore && <ActivityIndicator style={styles.loadingMore} />

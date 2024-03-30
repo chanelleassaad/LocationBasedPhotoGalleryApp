@@ -6,7 +6,7 @@ import {addPhotoStorage, deleteFromPhotoStorage} from '../store/PhotoStorage';
 export const baseURL =
   'https://6601591187c91a11641aa7a0.mockapi.io/myapp/photos';
 
-export const LIMIT = 16;
+export const LIMIT = 15;
 
 export interface IPhoto {
   id: string;
