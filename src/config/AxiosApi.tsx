@@ -24,7 +24,7 @@ export const addPhoto = async (photoUri: string) => {
       async position => {
         try {
           const response = await axios.get(
-            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=AIzaSyA9VuLDd9-gCTm3zpgpXe0L9fb3T39HHkw`,
+            `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=GOOGLE-CLOUD-KEY`,
           );
 
           if (
